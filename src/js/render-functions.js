@@ -3,15 +3,15 @@ import 'izitoast/dist/css/iziToast.min.css';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { per_page } from './pixabay-api';
-
+const gap = 24;
 let gallery = new SimpleLightbox('.gallery-item a', {
   captionsData: 'alt',
   captionDelay: 250,
 });
 
-const renderFnc = (response, page) => {
-  if (parseInt(response.data.totalHits) > 0) {
-    const html = response.data.hits
+const createGallery = (images, page) => {
+  if (parseInt(images.data.totalHits) > 0) {
+    const html = images.data.hits
       .map(
         ({
           largeImageURL,
@@ -22,7 +22,7 @@ const renderFnc = (response, page) => {
           comments,
           downloads,
         }) => {
-          return `<li class="gallery-item"><a href="${largeImageURL}" class="gallery-img"><img src="${webformatURL}" alt="${tags}"></a>
+          return `<li class="gallery-item"><a href="${largeImageURL}"><img class="gallery-img" src="${webformatURL}" alt="${tags}"></a>
             <div class="legend">
   <div class="field">
     <span class="label">Likes</span>
@@ -46,16 +46,17 @@ const renderFnc = (response, page) => {
       .join('');
     document.querySelector('.gallery').insertAdjacentHTML('beforeend', html);
     gallery.refresh();
-    document.querySelector('.loader').style.display = 'none';
-    if (page > Math.ceil(parseInt(response.data.totalHits) / per_page)) {
-      document.querySelector('.loadMoreBtn').style.display = 'none';
-      return iziToast.error({
+    hideLoader();
+    offSet();
+    if (page > Math.ceil(parseInt(images.data.totalHits) / per_page)) {
+      hideLoadMoreButton();
+      return iziToast.info({
         position: 'topRight',
         message: "We're sorry, but you've reached the end of search results.",
         backgroundColor: '#90CAF9',
         position: 'topRight',
       });
-    } else document.querySelector('.loadMoreBtn').style.display = 'flex';
+    } else showLoadMoreButton();
   } else {
     iziToast.show({
       title: 'Error',
@@ -73,10 +74,34 @@ const renderFnc = (response, page) => {
       progressBarColor: '#B51B1B',
       position: 'topRight',
     });
-    document.querySelector('.gallery').innerHTML = '';
-    document.querySelector('.loadMoreBtn').style.display = 'none';
-    document.querySelector('.loader').style.display = 'none';
+    clearGallery();
+    hideLoadMoreButton();
+    hideLoader();
   }
 };
 
-export default renderFnc;
+const offSet = () => {
+  const galleryItem = document.querySelector('.gallery-item');
+  window.scrollBy({
+    top: 2 * (galleryItem.getBoundingClientRect().height + gap), // adding gaps
+    behavior: 'smooth',
+  });
+};
+
+export const clearGallery = () => {
+  document.querySelector('.gallery').innerHTML = '';
+};
+export const hideLoader = () => {
+  document.querySelector('.loader').style.display = 'none';
+};
+export const showLoader = () => {
+  document.querySelector('.loader').style.display = 'flex';
+};
+export const showLoadMoreButton = () => {
+  document.querySelector('.loadMoreBtn').style.display = 'flex';
+};
+export const hideLoadMoreButton = () => {
+  document.querySelector('.loadMoreBtn').style.display = 'none';
+};
+
+export default createGallery;

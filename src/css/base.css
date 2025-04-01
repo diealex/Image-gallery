@@ -92,15 +92,15 @@ main:has(.back-link) {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  width: calc((100% - 72px) / 3);
   border: 1px solid #808080;
   width: 360px;
   height: 200px;
 }
-.gallery-img {
+.gallery-item > a {
   position: relative;
-  width: 360px;
   overflow: hidden;
+}
+.gallery-img {
   object-fit: cover;
 }
 .legend {

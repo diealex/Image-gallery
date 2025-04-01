@@ -1,26 +1,29 @@
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
-import serverRequest from './js/pixabay-api';
+import getImagesByQuery from './js/pixabay-api';
+import { clearGallery } from './js/render-functions';
+import { hideLoadMoreButton } from './js/render-functions';
+import { showLoader } from './js/render-functions';
 
-let searchWord = '';
+let query = '';
 let page;
 const form = document.querySelector('.form');
 const moreBtn = document.querySelector('.loadMoreBtn');
 form.addEventListener('submit', evt => {
-  page = 1;
   evt.preventDefault();
-  document.querySelector('.gallery').innerHTML = '';
-  document.querySelector('.loadMoreBtn').style.display = 'none';
-  searchWord = form.elements.searchText.value;
-  document.querySelector('.loader').style.display = 'flex';
+  page = 1;
+  clearGallery();
+  hideLoadMoreButton();
+  query = form.elements.searchText.value;
+  showLoader();
   form.reset();
-  serverRequest(searchWord, page);
+  getImagesByQuery(query, page);
   page += 1;
 });
 
 moreBtn.addEventListener('click', evt => {
-  moreBtn.style.display = 'none';
-  document.querySelector('.loader').style.display = 'flex';
-  serverRequest(searchWord, page);
+  hideLoadMoreButton();
+  showLoader();
+  getImagesByQuery(query, page);
   page += 1;
 });

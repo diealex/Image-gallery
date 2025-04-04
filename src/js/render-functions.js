@@ -47,7 +47,9 @@ const createGallery = (images, page) => {
     document.querySelector('.gallery').insertAdjacentHTML('beforeend', html);
     gallery.refresh();
     hideLoader();
-    offSet();
+    if (page > 2) {
+      offSet();
+    }
     if (page > Math.ceil(parseInt(images.data.totalHits) / per_page)) {
       hideLoadMoreButton();
       return iziToast.info({

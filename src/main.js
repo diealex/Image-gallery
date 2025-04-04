@@ -14,13 +14,21 @@ form.addEventListener('submit', evt => {
   page = 1;
   clearGallery();
   hideLoadMoreButton();
-  query = form.elements.searchText.value;
+  query = form.elements.searchText.value.trim();
+  if (!query) {
+    iziToast.error({
+      message: 'Please fill out the field',
+      backgroundColor: '#EF4040',
+      close: true,
+      position: 'topRight',
+    });
+    return;
+  }
   showLoader();
   form.reset();
   getImagesByQuery(query, page);
   page += 1;
 });
-
 moreBtn.addEventListener('click', evt => {
   hideLoadMoreButton();
   showLoader();
